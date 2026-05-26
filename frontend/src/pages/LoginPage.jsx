@@ -23,14 +23,19 @@ function LoginPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    console.log('Login:', email, password);
+    // Privremeno - kasnije backend
+    navigate('/passenger');
     setLoading(false);
   };
 
   const handleDemoLogin = (demoEmail, demoPassword, role) => {
     setEmail(demoEmail);
     setPassword(demoPassword);
-    console.log('Demo login kao:', role);
+
+    // Privremeno preusmeravanje za testiranje
+    if (role === 'Putnik') navigate('/passenger');
+    if (role === 'Vozač') navigate('/driver');
+    if (role === 'Administrator') navigate('/admin');
   };
 
   return (
