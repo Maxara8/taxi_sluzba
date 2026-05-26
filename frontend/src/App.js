@@ -5,6 +5,8 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import LandingPage from './pages/LandingPage';
 import PassengerDashboard from './pages/PassengerDashboard';
+import DriverDashboard from './pages/DriverDashboard';
+
 
 
 
@@ -16,6 +18,7 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/" element={<LandingPage />} />
         <Route path="/passenger" element={<PassengerDashboard />} />
+        <Route path="/driver" element={<DriverDashboard />} />
       </Routes>
     </Router>
   );
