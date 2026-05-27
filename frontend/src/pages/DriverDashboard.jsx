@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
-<Header role="driver" />
-
 
 const DEMO_RIDES = [
   { id: '1', passengerName: 'Marko Marković', from: 'Centar — Trg slobode, Novi Sad', to: 'FTN — Trg Dositeja Obradovića, Novi Sad', distance: 3, price: 270, status: 'pending', vehicleType: 'standard', notes: '' },
@@ -43,6 +41,7 @@ function DriverDashboard() {
 
   return (
     <div style={styles.page}>
+      <Header role="driver" />
       <div style={styles.container}>
 
         {/* Header */}

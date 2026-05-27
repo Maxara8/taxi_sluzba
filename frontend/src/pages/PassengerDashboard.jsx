@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
-<Header role="passenger" />
 
 const LOCATIONS = [
   { id: 'centar', name: 'Centar', address: 'Trg slobode, Novi Sad' },
@@ -83,6 +82,7 @@ function PassengerDashboard() {
 
   return (
     <div style={styles.page}>
+      <Header role="passenger" />
       <div style={styles.container}>
 
         {/* Welcome Header */}
