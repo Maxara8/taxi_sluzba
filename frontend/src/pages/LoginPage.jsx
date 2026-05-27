@@ -36,6 +36,7 @@ function LoginPage() {
     if (role === 'Putnik') navigate('/passenger');
     if (role === 'Vozač') navigate('/driver');
     if (role === 'Administrator') navigate('/admin');
+    if (role === 'Administrator') navigate('/admin');
   };
 
   return (
