@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import Header from '../components/Header';
+<Header role="admin" />
 
 const DEMO_RIDES = [
   { id: '1', passengerName: 'Marko Marković', from: 'Centar, Novi Sad', to: 'FTN, Novi Sad', status: 'completed', price: 270, distance: 3, driverName: 'Jovan Jovanović', requestedAt: new Date() },

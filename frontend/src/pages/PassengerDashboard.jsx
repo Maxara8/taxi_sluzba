@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import Header from '../components/Header';
+<Header role="passenger" />
 
 const LOCATIONS = [
   { id: 'centar', name: 'Centar', address: 'Trg slobode, Novi Sad' },
