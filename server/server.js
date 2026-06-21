@@ -4,6 +4,7 @@ import cors from 'cors';
 import connectDB from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
 import rideRoutes from './routes/rideRoutes.js';
+import vehicleRoutes from './routes/vehicleRoutes.js';
 
 dotenv.config({ path: './.env' });
 connectDB();
@@ -20,6 +21,8 @@ app.get('/', (req, res) => {
 
 app.use('/api/users', userRoutes);
 app.use('/api/rides', rideRoutes);
+app.use('/api/vehicles', vehicleRoutes);
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
