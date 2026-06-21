@@ -1,58 +1,72 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-
-const TaxiIcon = () => (
-  <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
-    <rect x="2" y="9" width="20" height="10" rx="2" fill="#eab308"/>
-    <rect x="6" y="6" width="12" height="5" rx="1.5" fill="#eab308"/>
-    <rect x="7" y="7" width="4" height="3" rx="0.5" fill="#1f2937"/>
-    <rect x="13" y="7" width="4" height="3" rx="0.5" fill="#1f2937"/>
-    <circle cx="6.5" cy="19.5" r="1.8" fill="#1f2937"/>
-    <circle cx="17.5" cy="19.5" r="1.8" fill="#1f2937"/>
-    <rect x="1" y="13" width="3" height="2" rx="0.5" fill="#fbbf24"/>
-    <rect x="20" y="13" width="3" height="2" rx="0.5" fill="#fbbf24"/>
-  </svg>
-);
+import { loginUser } from '../services/api';
 
 function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    // Privremeno - kasnije backend
-    navigate('/passenger');
-    setLoading(false);
+    setError('');
+
+    try {
+      const { data } = await loginUser({ email, password });
+
+      // Cuvamo korisnika u localStorage
+      localStorage.setItem('user', JSON.stringify(data));
+
+      // Preusmeravamo na osnovu role
+      if (data.role === 'admin') navigate('/admin');
+      else if (data.role === 'driver') navigate('/driver');
+      else navigate('/passenger');
+
+    } catch (err) {
+      setError(err.response?.data?.message || 'Greška pri prijavi');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDemoLogin = (demoEmail, demoPassword, role) => {
+  const handleDemoLogin = async (demoEmail, demoPassword) => {
     setEmail(demoEmail);
     setPassword(demoPassword);
+    setLoading(true);
+    setError('');
 
-    // Privremeno preusmeravanje za testiranje
-    if (role === 'Putnik') navigate('/passenger');
-    if (role === 'Vozač') navigate('/driver');
-    if (role === 'Administrator') navigate('/admin');
-    if (role === 'Administrator') navigate('/admin');
+    try {
+      const { data } = await loginUser({ email: demoEmail, password: demoPassword });
+      localStorage.setItem('user', JSON.stringify(data));
+
+      if (data.role === 'admin') navigate('/admin');
+      else if (data.role === 'driver') navigate('/driver');
+      else navigate('/passenger');
+
+    } catch (err) {
+      setError(err.response?.data?.message || 'Greška pri prijavi');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div style={styles.page}>
       <div style={styles.card}>
 
-        {/* Logo */}
         <div style={styles.logoRow}>
-            <span style={styles.logoEmoji}>🚖</span>
-            <span style={styles.logoText}>TaxiServis</span>
+          <span style={styles.logoEmoji}>🚖</span>
+          <span style={styles.logoText}>TaxiServis</span>
         </div>
 
         <h2 style={styles.title}>Prijava</h2>
         <p style={styles.subtitle}>Unesite svoje podatke za pristup sistemu</p>
 
-        {/* Forma */}
+        {error && <p style={styles.error}>{error}</p>}
+
         <form onSubmit={handleSubmit} style={styles.form}>
           <label style={styles.label}>Email</label>
           <input
@@ -79,21 +93,19 @@ function LoginPage() {
           </button>
         </form>
 
-        {/* Demo nalozi */}
         <p style={styles.demoText}>Demo nalozi:</p>
         <div style={styles.demoButtons}>
-          <button style={styles.btnOutline} onClick={() => handleDemoLogin('admin@taxi.com', 'admin123', 'Administrator')}>
+          <button style={styles.btnOutline} onClick={() => handleDemoLogin('admin@taxi.com', 'admin123')}>
             Prijavi se kao Administrator
           </button>
-          <button style={styles.btnOutline} onClick={() => handleDemoLogin('putnik@test.com', 'putnik123', 'Putnik')}>
+          <button style={styles.btnOutline} onClick={() => handleDemoLogin('putnik@test.com', 'putnik123')}>
             Prijavi se kao Putnik
           </button>
-          <button style={styles.btnOutline} onClick={() => handleDemoLogin('vozac@test.com', 'vozac123', 'Vozač')}>
+          <button style={styles.btnOutline} onClick={() => handleDemoLogin('vozac@test.com', 'vozac123')}>
             Prijavi se kao Vozač
           </button>
         </div>
 
-        {/* Linkovi */}
         <p style={styles.registerText}>
           Nemate nalog?{' '}
           <Link to="/register" style={styles.link}>Registrujte se</Link>
@@ -132,9 +144,7 @@ const styles = {
     gap: '10px',
     marginBottom: '16px',
   },
-  logoEmoji: {
-    fontSize: '36px',
-  },
+  logoEmoji: { fontSize: '36px' },
   logoText: {
     fontSize: '24px',
     color: '#fff',
@@ -153,7 +163,16 @@ const styles = {
     textAlign: 'center',
     fontSize: '14px',
     marginBottom: '24px',
-    fontWeight: '400',
+  },
+  error: {
+    backgroundColor: 'rgba(239,68,68,0.15)',
+    border: '1px solid rgba(239,68,68,0.3)',
+    color: '#f87171',
+    borderRadius: '8px',
+    padding: '10px 12px',
+    fontSize: '13px',
+    marginBottom: '12px',
+    textAlign: 'center',
   },
   form: {
     display: 'flex',
@@ -187,7 +206,6 @@ const styles = {
     cursor: 'pointer',
     marginTop: '4px',
     fontFamily: "'Inter', sans-serif",
-    letterSpacing: '0.2px',
   },
   demoText: {
     color: '#9ca3af',

@@ -5,6 +5,8 @@ function Header({ role }) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    // Brisemo korisnika iz localStorage
+    localStorage.removeItem('user');
     navigate('/login');
   };
 
@@ -15,22 +17,24 @@ function Header({ role }) {
     return '';
   };
 
+  // Uzimamo ime korisnika iz localStorage
+  const user = JSON.parse(localStorage.getItem('user'));
+
   return (
     <header style={styles.header}>
       <div style={styles.inner}>
-
-        {/* Logo */}
         <div style={styles.logoRow}>
           <span style={styles.logoEmoji}>🚖</span>
           <span style={styles.logoText}>TaxiServis</span>
           {role && <span style={styles.roleBadge}>{getRoleLabel()}</span>}
         </div>
 
-        {/* Desna strana */}
-        <button onClick={handleLogout} style={styles.logoutBtn}>
-          → Odjavi se
-        </button>
-
+        <div style={styles.rightSide}>
+          {user && <span style={styles.userName}>{user.name}</span>}
+          <button onClick={handleLogout} style={styles.logoutBtn}>
+            → Odjavi se
+          </button>
+        </div>
       </div>
     </header>
   );
@@ -63,7 +67,6 @@ const styles = {
     fontSize: '20px',
     color: '#fff',
     fontWeight: '700',
-    letterSpacing: '-0.5px',
   },
   roleBadge: {
     backgroundColor: 'rgba(234,179,8,0.2)',
@@ -73,6 +76,15 @@ const styles = {
     padding: '3px 10px',
     fontSize: '12px',
     fontWeight: '600',
+  },
+  rightSide: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '16px',
+  },
+  userName: {
+    color: '#9ca3af',
+    fontSize: '14px',
   },
   logoutBtn: {
     backgroundColor: 'rgba(239,68,68,0.15)',

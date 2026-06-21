@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { registerUser } from '../services/api';
 
 function RegisterPage() {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -26,16 +27,29 @@ function RegisterPage() {
     }
 
     setLoading(true);
-    console.log('Registracija:', name, email, role);
-    // kasnije backend poziv
-    setLoading(false);
+
+    try {
+      const { data } = await registerUser({ name, email, password, role });
+
+      // Cuvamo korisnika u localStorage
+      localStorage.setItem('user', JSON.stringify(data));
+
+      // Preusmeravamo na osnovu role
+      if (data.role === 'admin') navigate('/admin');
+      else if (data.role === 'driver') navigate('/driver');
+      else navigate('/passenger');
+
+    } catch (err) {
+      setError(err.response?.data?.message || 'Greška pri registraciji');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div style={styles.page}>
       <div style={styles.card}>
 
-        {/* Logo */}
         <div style={styles.logoRow}>
           <span style={styles.logoEmoji}>🚖</span>
           <span style={styles.logoText}>TaxiServis</span>
@@ -44,10 +58,8 @@ function RegisterPage() {
         <h2 style={styles.title}>Registracija</h2>
         <p style={styles.subtitle}>Kreirajte novi nalog</p>
 
-        {/* Greška */}
         {error && <p style={styles.error}>{error}</p>}
 
-        {/* Forma */}
         <form onSubmit={handleSubmit} style={styles.form}>
 
           <label style={styles.label}>Ime i prezime</label>
@@ -90,7 +102,6 @@ function RegisterPage() {
             required
           />
 
-          {/* Tip naloga - Radio dugmadi */}
           <label style={styles.label}>Tip naloga</label>
           <div style={styles.radioGroup}>
             <label style={styles.radioLabel}>
@@ -125,7 +136,6 @@ function RegisterPage() {
 
         </form>
 
-        {/* Linkovi */}
         <p style={styles.linkText}>
           Već imate nalog?{' '}
           <Link to="/login" style={styles.link}>Prijavite se</Link>
@@ -164,9 +174,7 @@ const styles = {
     gap: '10px',
     marginBottom: '16px',
   },
-  logoEmoji: {
-    fontSize: '36px',
-  },
+  logoEmoji: { fontSize: '36px' },
   logoText: {
     fontSize: '24px',
     color: '#fff',
@@ -187,8 +195,8 @@ const styles = {
     marginBottom: '24px',
   },
   error: {
-    backgroundColor: 'rgba(239, 68, 68, 0.15)',
-    border: '1px solid rgba(239, 68, 68, 0.3)',
+    backgroundColor: 'rgba(239,68,68,0.15)',
+    border: '1px solid rgba(239,68,68,0.3)',
     color: '#f87171',
     borderRadius: '8px',
     padding: '10px 12px',
