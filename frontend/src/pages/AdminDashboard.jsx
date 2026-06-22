@@ -200,7 +200,7 @@ function AdminDashboard() {
                   </div>
                   <div>
                     <label style={styles.formLabel}>Registracija</label>
-                    <input style={styles.formInput} placeholder="NS 123-AB" value={newVehicle.licensePlate} onChange={e => setNewVehicle({ ...newVehicle, licensePlate: e.target.value })} />
+                    <input style={styles.formInput} placeholder="NS 123 AB" value={newVehicle.licensePlate} onChange={e => setNewVehicle({ ...newVehicle, licensePlate: e.target.value })} />
                   </div>
                   <div>
                     <label style={styles.formLabel}>Godina</label>
